@@ -77,12 +77,12 @@ func (c *active24DNSProviderSolver) Initialize(restConfig *rest.Config, _ <-chan
 func (c *active24DNSProviderSolver) Present(ch *v1alpha1.ChallengeRequest) error {
 	klog.V(2).Infof("Present: fqdn=%s, zone=%s, key=%s", ch.ResolvedFQDN, ch.ResolvedZone, ch.Key)
 
-	name, err := c.recordName(ch)
+	config, err := clientConfig(c, ch)
 	if err != nil {
 		return err
 	}
 
-	config, err := clientConfig(c, ch)
+	name, err := c.recordName(ch, config)
 	if err != nil {
 		return err
 	}
@@ -185,9 +185,9 @@ func clientConfig(c *active24DNSProviderSolver, ch *v1alpha1.ChallengeRequest) (
 }
 
 // extracts record name from FQDN
-func (c *active24DNSProviderSolver) recordName(ch *v1alpha1.ChallengeRequest) (string, error) {
+func (c *active24DNSProviderSolver) recordName(ch *v1alpha1.ChallengeRequest, cfg *internal.Config) (string, error) {
 	klog.V(4).Infof("recordName: ResolvedZone=%s, ResolvedFQDN=%s", ch.ResolvedZone, ch.ResolvedFQDN)
-	domain := strings.TrimRight(ch.ResolvedZone, ".")
+	domain := strings.TrimRight(cfg.DomainName, ".")
 	regexStr := "(.+)\\." + domain + "\\."
 	r := regexp.MustCompile(regexStr)
 	name := r.FindStringSubmatch(ch.ResolvedFQDN)
