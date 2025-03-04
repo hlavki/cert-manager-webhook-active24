@@ -185,7 +185,7 @@ func clientConfig(c *active24DNSProviderSolver, ch *v1alpha1.ChallengeRequest) (
 }
 
 // extracts record name from FQDN
-func (c *active24DNSProviderSolver) recordName(ch *v1alpha1.ChallengeRequest, config *internal.Config) (string, error) {
+func (c *active24DNSProviderSolver) recordName(ch *v1alpha1.ChallengeRequest, config internal.Config) (string, error) {
 	klog.V(4).Infof("recordName: ResolvedZone=%s, ResolvedFQDN=%s", ch.ResolvedZone, ch.ResolvedFQDN)
 	domain := strings.TrimRight(config.DomainName, ".")
 	regexStr := "(.+)\\." + domain + "\\."
